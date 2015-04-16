@@ -12,6 +12,7 @@ Keys:
         Saturation F/f g/G
         Value      V/v b/B
 """
+from __future__ import print_function
 from datetime import datetime
 import sys
 
@@ -23,7 +24,7 @@ GAUSSIANBLUR_PARAMS = [(7, 7), 0]
 
 
 def main():
-    print __doc__
+    print(__doc__, file=sys.stderr)
 
     try:
         video_device_number = int(sys.argv[1])
@@ -109,19 +110,19 @@ class Bounds(object):
 
     def decrease_lower(self):
         self.lower = max(self.lower - self.increment, self.min)
-        print self
+        print(self)
 
     def increase_lower(self):
         self.lower = min(self.lower + self.increment, self.upper)
-        print self
+        print(self)
 
     def decrease_upper(self):
         self.upper = max(self.upper - self.increment, self.lower)
-        print self
+        print(self)
 
     def increase_upper(self):
         self.upper = min(self.upper + self.increment, self.max)
-        print self
+        print(self)
 
     def __iter__(self):
         return iter((self.lower, self.upper, self.max))
