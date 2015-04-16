@@ -55,7 +55,8 @@ def main():
     compounding = False
 
     while True:
-        hsv = get_hsv(capture)
+        _, image = capture.read()
+        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         blurred = cv2.GaussianBlur(hsv, *GAUSSIANBLUR_PARAMS)
         hue, saturation, value = cv2.split(blurred)
         apply_threshold(hue, *hue_bounds)
@@ -82,7 +83,7 @@ def main():
                 break
             else:
                 compounding = True
-                start_tracking_image = hsv
+                start_tracking_image = image
         else:
             func = bounds_functions.get(key)
             if func:
@@ -123,15 +124,15 @@ class Bounds(object):
         print self
 
     def __iter__(self):
-        return iter((self.lower, self.upper))
+        return iter((self.lower, self.upper, self.max))
 
     def __repr__(self):
         return '<{s.name}: lower={s.lower} upper={s.upper}>'.format(s=self)
 
 
-def apply_threshold(values, min, max):
-    cv2.threshold(values, min, max, cv2.THRESH_TOZERO, values)
-    cv2.threshold(values, min, max, cv2.THRESH_TOZERO_INV, values)
+def apply_threshold(values, lower, upper, max):
+    cv2.threshold(values, lower, max, cv2.THRESH_TOZERO, values)
+    cv2.threshold(values, upper, max, cv2.THRESH_TOZERO_INV, values)
     cv2.threshold(values, 1, max, cv2.THRESH_BINARY, values)
 
 
@@ -161,11 +162,6 @@ def decipher_key(key):
 def get_grayscale(capture):
     _, image = capture.read()
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-
-def get_hsv(capture):
-    _, image = capture.read()
-    return cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
 
 def save_image(image):
