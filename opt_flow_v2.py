@@ -31,6 +31,9 @@ def main():
     except IndexError:
         video_device_number = 0
     capture = cv2.VideoCapture(video_device_number)
+    if not capture.isOpened():
+        print("Couldn't open video device %s" % video_device_number, file=sys.stderr)
+        sys.exit(1)
 
     hue_bounds = Bounds('hue', lower=50, upper=70, max=179)
     sat_bounds = Bounds('sat', lower=30, upper=255)
